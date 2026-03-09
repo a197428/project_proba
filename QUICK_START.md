@@ -2,18 +2,27 @@
 
 ## 🚀 Запуск за 3 шага
 
-### 1. Откройте калькулятор
-Откройте файл **`calculator-preview.html`** в браузере (двойной клик или перетащите в окно браузера)
+### Вариант 1: Онлайн (GitHub Pages) - РЕКОМЕНДУЕТСЯ
 
-### 2. Начните вычисления
-Используйте мышь или клавиатуру для ввода:
-- **Цифры**: 0-9
-- **Операции**: + − × ÷
-- **Результат**: = или Enter
-- **Очистка**: C или Escape
+1. **[Откройте калькулятор онлайн](https://a197428.github.io/project_proba/calculator-preview.html)** 🧮
+2. **[Запустите тесты онлайн](https://a197428.github.io/project_proba/calculator-tests.html)** 🧪
+3. Готово! Калькулятор работает прямо в браузере!
 
-### 3. Проверьте точность (опционально)
-Откройте **`calculator-tests.html`** для запуска автоматических тестов
+> **Примечание:** Если ссылки не работают, нужно включить GitHub Pages в настройках репозитория.  
+> Инструкция: `GITHUB_PAGES_SETUP.md`
+
+### Вариант 2: Альтернативный онлайн просмотр (htmlpreview)
+
+Работает сразу, без настройки:
+
+1. **[Калькулятор через htmlpreview](https://htmlpreview.github.io/?https://github.com/a197428/project_proba/blob/main/calculator-preview.html)**
+2. **[Тесты через htmlpreview](https://htmlpreview.github.io/?https://github.com/a197428/project_proba/blob/main/calculator-tests.html)**
+
+### Вариант 3: Локально на компьютере
+
+1. Скачайте файл **`calculator-preview.html`**
+2. Откройте его в браузере (двойной клик)
+3. Начните вычисления!
 
 ## ✨ Ключевые особенности
 

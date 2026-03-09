@@ -24,7 +24,19 @@
 
 ## Как использовать
 
-### Запуск калькулятора
+### Онлайн просмотр (рекомендуется)
+
+**Прямые ссылки GitHub Pages:**
+- 🧮 [Открыть калькулятор](https://a197428.github.io/project_proba/calculator-preview.html)
+- 🧪 [Запустить тесты](https://a197428.github.io/project_proba/calculator-tests.html)
+
+**Альтернативные ссылки (htmlpreview):**
+- [Калькулятор](https://htmlpreview.github.io/?https://github.com/a197428/project_proba/blob/main/calculator-preview.html)
+- [Тесты](https://htmlpreview.github.io/?https://github.com/a197428/project_proba/blob/main/calculator-tests.html)
+
+> Если GitHub Pages ссылки не работают, см. инструкцию: `GITHUB_PAGES_SETUP.md`
+
+### Локальный запуск
 
 1. Откройте файл `calculator-preview.html` в любом современном браузере
 2. Калькулятор готов к использованию!
