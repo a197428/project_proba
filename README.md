@@ -6,15 +6,21 @@
 
 ### 🚀 Быстрый старт
 
-#### Онлайн просмотр (GitHub Pages)
+#### 🌐 Онлайн просмотр (GitHub Pages)
 1. **[Открыть калькулятор](https://a197428.github.io/project_proba/calculator-preview.html)** 🧮
 2. **[Запустить тесты](https://a197428.github.io/project_proba/calculator-tests.html)** 🧪
 
-#### Альтернативный просмотр (htmlpreview)
+> **Примечание:** Если ссылки не работают, нужно включить GitHub Pages.  
+> **Инструкция:** [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md)
+
+#### 🔄 Альтернативный просмотр (htmlpreview)
 1. **[Калькулятор через htmlpreview](https://htmlpreview.github.io/?https://github.com/a197428/project_proba/blob/main/calculator-preview.html)**
 2. **[Тесты через htmlpreview](https://htmlpreview.github.io/?https://github.com/a197428/project_proba/blob/main/calculator-tests.html)**
 
-#### Локальный запуск
+#### 📋 Все ссылки
+**[👉 Полный список ссылок](LINKS.md)** - все способы просмотра и документация
+
+#### 💻 Локальный запуск
 1. Скачайте файл `calculator-preview.html`
 2. Откройте его в браузере
 3. Читайте документацию: `QUICK_START.md`
