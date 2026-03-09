@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тесты калькулятора - Проверка точности</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .test-case {
+            padding: 10px;
+            margin: 5px 0;
+            border-left: 4px solid #ddd;
+            background: #f9f9f9;
+        }
+
+        .test-case.pass {
+            border-left-color: #4caf50;
+            background: #f1f8f4;
+        }
+
+        .test-case.fail {
+            border-left-color: #f44336;
+            background: #fef1f0;
+        }
+
+        .test-expression {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+
+        .test-result {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .summary {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 30px 0;
+        }
+
+        .summary.pass {
+            color: #4caf50;
+        }
+
+        .summary.fail {
+            color: #f44336;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Тесты точности вычислений калькулятора</h1>
+
+    <button type="button" onclick="runTests()">Запустить тесты</button>
+
+    <div id="results"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/decimal.js@10.4.3/decimal.min.js"></script>
+
+    <script>
+        // Копия класса CalculatorEngine для тестирования
+        class CalculatorEngine {
+            constructor() {
+                this.reset();
+                Decimal.set({ precision: 20, rounding: Decimal.ROUND_HALF_UP });
+            }
+
+            reset() {
+                this.currentValue = '0';
+                this.previousValue = null;
+                this.operation = null;
+                this.waitingForOperand = false;
+                this.lastOperation = {
+                    operator: null,
+                    operand: null
+                };
+            }
+
+            inputDigit(digit) {
+                if (this.waitingForOperand) {
+                    this.currentValue = digit;
+                    this.waitingForOperand = false;
+                } else {
+                    if (this.currentValue === '0') {
+                        this.currentValue = digit;
+                    } else if (this.currentValue.length < 15) {
+                        this.currentValue += digit;
+                    }
+                }
+            }
+
+            inputDecimal() {
+                if (this.waitingForOperand) {
+                    this.currentValue = '0.';
+                    this.waitingForOperand = false;
+                } else if (!this.currentValue.includes('.')) {
+                    this.currentValue += '.';
+                }
+            }
+
+            setOperation(operator) {
+                if (this.previousValue === null) {
+                    this.previousValue = this.currentValue;
+                    this.operation = operator;
+                    this.waitingForOperand = true;
+                } else if (this.operation !== null && !this.waitingForOperand) {
+                    const result = this.calculate();
+                    if (result.success) {
+                        this.currentValue = result.value;
+                        this.previousValue = result.value;
+                        this.operation = operator;
+                        this.waitingForOperand = true;
+                    }
+                } else {
+                    this.operation = operator;
+                    this.waitingForOperand = true;
+                }
+            }
+
+            calculate() {
+                if (this.previousValue === null || this.operation === null) {
+                    return { success: true, value: this.currentValue };
+                }
+
+                try {
+                    const a = new Decimal(this.previousValue);
+                    const b = new Decimal(this.currentValue);
+
+                    this.lastOperation.operator = this.operation;
+                    this.lastOperation.operand = this.currentValue;
+
+                    let result;
+
+                    switch (this.operation) {
+                        case '+':
+                            result = a.plus(b);
+                            break;
+                        case '−':
+                            result = a.minus(b);
+                            break;
+                        case '×':
+                            result = a.times(b);
+                            break;
+                        case '÷':
+                            if (b.isZero()) {
+                                return { success: false, value: this.currentValue, error: 'Ошибка: деление на ноль' };
+                            }
+                            result = a.dividedBy(b);
+                            break;
+                        default:
+                            return { success: false, value: this.currentValue, error: 'Неизвестная операция' };
+                    }
+
+                    result = result.toDecimalPlaces(10);
+                    const formattedResult = this.formatNumber(result.toString());
+
+                    this.previousValue = null;
+                    this.operation = null;
+                    this.waitingForOperand = true;
+
+                    return { success: true, value: formattedResult };
+                } catch (error) {
+                    return { success: false, value: this.currentValue, error: 'Ошибка вычисления' };
+                }
+            }
+
+            formatNumber(value) {
+                let formatted = value;
+
+                if (formatted.length > 15) {
+                    const num = new Decimal(formatted);
+                    formatted = num.toExponential(6);
+                } else if (formatted.includes('.')) {
+                    formatted = formatted.replace(/\.?0+$/, '');
+                }
+
+                return formatted;
+            }
+
+            getDisplayValue() {
+                return this.currentValue;
+            }
+        }
+
+        // Функция для выполнения вычисления
+        function compute(a, op, b) {
+            const engine = new CalculatorEngine();
+            engine.currentValue = a.toString();
+            engine.previousValue = a.toString();
+            engine.operation = op;
+            engine.currentValue = b.toString();
+            const result = engine.calculate();
+            return result;
+        }
+
+        // Тестовые случаи
+        const testCases = [
+            // Базовые операции
+            { name: 'Сложение целых чисел', a: 5, op: '+', b: 3, expected: '8' },
+            { name: 'Вычитание целых чисел', a: 10, op: '−', b: 4, expected: '6' },
+            { name: 'Умножение целых чисел', a: 7, op: '×', b: 6, expected: '42' },
+            { name: 'Деление целых чисел', a: 20, op: '÷', b: 4, expected: '5' },
+
+            // Десятичные числа
+            { name: 'Сложение десятичных', a: 0.1, op: '+', b: 0.2, expected: '0.3' },
+            { name: 'Вычитание десятичных', a: 1.5, op: '−', b: 0.3, expected: '1.2' },
+            { name: 'Умножение десятичных', a: 2.5, op: '×', b: 4, expected: '10' },
+            { name: 'Деление с остатком', a: 10, op: '÷', b: 3, expected: '3.3333333333' },
+
+            // Проблемные случаи с плавающей точкой
+            { name: '0.1 + 0.2 (классическая проблема)', a: 0.1, op: '+', b: 0.2, expected: '0.3' },
+            { name: '0.3 - 0.2', a: 0.3, op: '−', b: 0.2, expected: '0.1' },
+            { name: '0.07 × 100', a: 0.07, op: '×', b: 100, expected: '7' },
+
+            // Большие числа
+            { name: 'Большие числа сложение', a: 999999999999, op: '+', b: 1, expected: '1000000000000' },
+            { name: 'Большие числа умножение', a: 123456789, op: '×', b: 987654321, expected: '121932631112635269' },
+
+            // Отрицательные числа
+            { name: 'Отрицательное + положительное', a: -5, op: '+', b: 3, expected: '-2' },
+            { name: 'Отрицательное - отрицательное', a: -10, op: '−', b: -3, expected: '-7' },
+            { name: 'Отрицательное × положительное', a: -4, op: '×', b: 5, expected: '-20' },
+            { name: 'Отрицательное ÷ положительное', a: -20, op: '÷', b: 4, expected: '-5' },
+
+            // Ноль
+            { name: 'Ноль + число', a: 0, op: '+', b: 5, expected: '5' },
+            { name: 'Число - ноль', a: 10, op: '−', b: 0, expected: '10' },
+            { name: 'Ноль × число', a: 0, op: '×', b: 100, expected: '0' },
+            { name: 'Ноль ÷ число', a: 0, op: '÷', b: 5, expected: '0' },
+
+            // Деление на ноль (должно вернуть ошибку)
+            { name: 'Деление на ноль', a: 10, op: '÷', b: 0, expected: 'error', expectError: true },
+
+            // Точность округления
+            { name: 'Округление до 10 знаков', a: 1, op: '÷', b: 3, expected: '0.3333333333' },
+            { name: 'Периодическая дробь 2/3', a: 2, op: '÷', b: 3, expected: '0.6666666667' },
+            { name: 'Периодическая дробь 1/7', a: 1, op: '÷', b: 7, expected: '0.1428571429' },
+
+            // Очень маленькие числа
+            { name: 'Маленькие числа', a: 0.0000001, op: '+', b: 0.0000002, expected: '0.0000003' },
+            { name: 'Маленькие числа умножение', a: 0.001, op: '×', b: 0.001, expected: '0.000001' }
+        ];
+
+        function runTests() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            let passed = 0;
+            let failed = 0;
+
+            testCases.forEach((test, index) => {
+                const result = compute(test.a, test.op, test.b);
+
+                let success = false;
+                let actualValue = '';
+
+                if (test.expectError) {
+                    success = !result.success;
+                    actualValue = result.success ? result.value : 'error';
+                } else {
+                    success = result.success && result.value === test.expected;
+                    actualValue = result.value;
+                }
+
+                if (success) {
+                    passed++;
+                } else {
+                    failed++;
+                }
+
+                const testDiv = document.createElement('div');
+                testDiv.className = `test-case ${success ? 'pass' : 'fail'}`;
+                testDiv.innerHTML = `
+                    <div class="test-expression">
+                        ${index + 1}. ${test.name}: ${test.a} ${test.op} ${test.b}
+                    </div>
+                    <div class="test-result">
+                        Ожидалось: ${test.expected}<br>
+                        Получено: ${actualValue}<br>
+                        Статус: ${success ? '✓ PASS' : '✗ FAIL'}
+                    </div>
+                `;
+
+                resultsDiv.appendChild(testDiv);
+            });
+
+            const summaryDiv = document.createElement('div');
+            summaryDiv.className = `summary ${failed === 0 ? 'pass' : 'fail'}`;
+            summaryDiv.innerHTML = `
+                Результаты: ${passed} пройдено, ${failed} провалено из ${testCases.length} тестов
+            `;
+
+            resultsDiv.insertBefore(summaryDiv, resultsDiv.firstChild);
+        }
+
+        // Автоматический запуск тестов при загрузке
+        window.addEventListener('load', runTests);
+    </script>
+</body>
+</html>

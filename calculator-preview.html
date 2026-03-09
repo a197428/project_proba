@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор - Визуальный прототип</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .preview-container {
+            text-align: center;
+        }
+
+        .preview-title {
+            color: white;
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .calculator-container {
+            background: #1e1e1e;
+            width: 360px;
+            max-width: 100%;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            margin: 0 auto;
+        }
+
+        .display-container {
+            background: #2d2d2d;
+            height: 100px;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            overflow: hidden;
+        }
+
+        .display {
+            color: #ffffff;
+            font-size: 48px;
+            font-weight: 300;
+            text-align: right;
+            width: 100%;
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .btn {
+            height: 70px;
+            border-radius: 12px;
+            font-size: 24px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-number {
+            background: #505050;
+        }
+
+        .btn-number:hover {
+            background: #606060;
+        }
+
+        .btn-operation {
+            background: #ff9500;
+        }
+
+        .btn-operation:hover {
+            background: #ffb143;
+        }
+
+        .btn-function {
+            background: #a5a5a5;
+        }
+
+        .btn-function:hover {
+            background: #b5b5b5;
+        }
+
+        .btn-equals {
+            background: #ff9500;
+        }
+
+        .btn-equals:hover {
+            background: #ffb143;
+        }
+
+        .btn-zero {
+            grid-column: span 2;
+        }
+
+        .info-text {
+            color: white;
+            margin-top: 30px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .display-error {
+            animation: shake 0.3s ease;
+            color: #ff4444 !important;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes button-press {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-pressed {
+            animation: button-press 0.15s ease;
+        }
+
+        /* Адаптивность для мобильных */
+        @media (max-width: 767px) {
+            .calculator-container {
+                width: 100%;
+                max-width: 340px;
+                padding: 16px;
+            }
+
+            .display-container {
+                height: 80px;
+                font-size: 36px;
+                padding: 16px;
+            }
+
+            .display {
+                font-size: 36px;
+            }
+
+            .buttons-grid {
+                gap: 10px;
+            }
+
+            .btn {
+                height: 60px;
+                font-size: 20px;
+            }
+
+            .preview-title {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .display {
+                font-size: 32px;
+            }
+
+            .btn {
+                height: 55px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-container">
+        <h1 class="preview-title">Визуальный прототип калькулятора</h1>
+
+        <div class="calculator-container">
+            <div class="display-container">
+                <div class="display">0</div>
+            </div>
+
+            <div class="buttons-grid">
+                <!-- Первый ряд -->
+                <button type="button" class="btn btn-function">AC</button>
+                <button type="button" class="btn btn-function">C</button>
+                <button type="button" class="btn btn-function">⌫</button>
+                <button type="button" class="btn btn-operation">÷</button>
+
+                <!-- Второй ряд -->
+                <button type="button" class="btn btn-number">7</button>
+                <button type="button" class="btn btn-number">8</button>
+                <button type="button" class="btn btn-number">9</button>
+                <button type="button" class="btn btn-operation">×</button>
+
+                <!-- Третий ряд -->
+                <button type="button" class="btn btn-number">4</button>
+                <button type="button" class="btn btn-number">5</button>
+                <button type="button" class="btn btn-number">6</button>
+                <button type="button" class="btn btn-operation">−</button>
+
+                <!-- Четвертый ряд -->
+                <button type="button" class="btn btn-number">1</button>
+                <button type="button" class="btn btn-number">2</button>
+                <button type="button" class="btn btn-number">3</button>
+                <button type="button" class="btn btn-operation">+</button>
+
+                <!-- Пятый ряд -->
+                <button type="button" class="btn btn-number btn-zero">0</button>
+                <button type="button" class="btn btn-number">.</button>
+                <button type="button" class="btn btn-equals">=</button>
+            </div>
+        </div>
+
+        <p class="info-text">
+            Полнофункциональный калькулятор с высокой точностью вычислений.<br>
+            Поддержка клавиатуры: цифры, +, -, *, /, Enter, Escape, Backspace
+        </p>
+    </div>
+
+    <!-- Decimal.js для высокоточных вычислений -->
+    <script src="https://cdn.jsdelivr.net/npm/decimal.js@10.4.3/decimal.min.js"></script>
+
+    <script>
+        // Класс для высокоточных вычислений с использованием Decimal.js
+        class CalculatorEngine {
+            constructor() {
+                this.reset();
+                // Настройка Decimal.js для точности до 10 знаков после запятой
+                Decimal.set({ precision: 20, rounding: Decimal.ROUND_HALF_UP });
+            }
+
+            reset() {
+                this.currentValue = '0';
+                this.previousValue = null;
+                this.operation = null;
+                this.waitingForOperand = false;
+                this.lastOperation = {
+                    operator: null,
+                    operand: null
+                };
+            }
+
+            inputDigit(digit) {
+                if (this.waitingForOperand) {
+                    this.currentValue = digit;
+                    this.waitingForOperand = false;
+                } else {
+                    if (this.currentValue === '0') {
+                        this.currentValue = digit;
+                    } else if (this.currentValue.length < 15) {
+                        this.currentValue += digit;
+                    }
+                }
+            }
+
+            inputDecimal() {
+                if (this.waitingForOperand) {
+                    this.currentValue = '0.';
+                    this.waitingForOperand = false;
+                } else if (!this.currentValue.includes('.')) {
+                    this.currentValue += '.';
+                }
+            }
+
+            setOperation(operator) {
+                if (this.previousValue === null) {
+                    this.previousValue = this.currentValue;
+                    this.operation = operator;
+                    this.waitingForOperand = true;
+                } else if (this.operation !== null && !this.waitingForOperand) {
+                    // Выполнить предыдущую операцию перед установкой новой
+                    const result = this.calculate();
+                    if (result.success) {
+                        this.currentValue = result.value;
+                        this.previousValue = result.value;
+                        this.operation = operator;
+                        this.waitingForOperand = true;
+                    }
+                } else {
+                    this.operation = operator;
+                    this.waitingForOperand = true;
+                }
+            }
+
+            calculate() {
+                if (this.previousValue === null || this.operation === null) {
+                    return { success: true, value: this.currentValue };
+                }
+
+                try {
+                    const a = new Decimal(this.previousValue);
+                    const b = new Decimal(this.currentValue);
+
+                    // Сохранить для повторения операции
+                    this.lastOperation.operator = this.operation;
+                    this.lastOperation.operand = this.currentValue;
+
+                    let result;
+
+                    switch (this.operation) {
+                        case '+':
+                            result = a.plus(b);
+                            break;
+                        case '−':
+                            result = a.minus(b);
+                            break;
+                        case '×':
+                            result = a.times(b);
+                            break;
+                        case '÷':
+                            if (b.isZero()) {
+                                return { success: false, value: this.currentValue, error: 'Ошибка: деление на ноль' };
+                            }
+                            result = a.dividedBy(b);
+                            break;
+                        default:
+                            return { success: false, value: this.currentValue, error: 'Неизвестная операция' };
+                    }
+
+                    // Округление до 10 знаков после запятой
+                    result = result.toDecimalPlaces(10);
+
+                    // Форматирование результата
+                    const formattedResult = this.formatNumber(result.toString());
+
+                    // Сброс состояния
+                    this.previousValue = null;
+                    this.operation = null;
+                    this.waitingForOperand = true;
+
+                    return { success: true, value: formattedResult };
+                } catch (error) {
+                    return { success: false, value: this.currentValue, error: 'Ошибка вычисления' };
+                }
+            }
+
+            repeatLastOperation() {
+                if (this.lastOperation.operator === null || this.lastOperation.operand === null) {
+                    return { success: true, value: this.currentValue };
+                }
+
+                try {
+                    const a = new Decimal(this.currentValue);
+                    const b = new Decimal(this.lastOperation.operand);
+
+                    let result;
+
+                    switch (this.lastOperation.operator) {
+                        case '+':
+                            result = a.plus(b);
+                            break;
+                        case '−':
+                            result = a.minus(b);
+                            break;
+                        case '×':
+                            result = a.times(b);
+                            break;
+                        case '÷':
+                            if (b.isZero()) {
+                                return { success: false, value: this.currentValue, error: 'Ошибка: деление на ноль' };
+                            }
+                            result = a.dividedBy(b);
+                            break;
+                        default:
+                            return { success: false, value: this.currentValue, error: 'Неизвестная операция' };
+                    }
+
+                    result = result.toDecimalPlaces(10);
+                    const formattedResult = this.formatNumber(result.toString());
+
+                    return { success: true, value: formattedResult };
+                } catch (error) {
+                    return { success: false, value: this.currentValue, error: 'Ошибка вычисления' };
+                }
+            }
+
+            clear() {
+                this.currentValue = '0';
+            }
+
+            clearAll() {
+                this.reset();
+            }
+
+            backspace() {
+                if (this.currentValue.length > 1) {
+                    this.currentValue = this.currentValue.slice(0, -1);
+                } else {
+                    this.currentValue = '0';
+                }
+            }
+
+            formatNumber(value) {
+                // Удаление незначащих нулей
+                let formatted = value;
+
+                // Проверка на необходимость научной нотации
+                if (formatted.length > 15) {
+                    const num = new Decimal(formatted);
+                    formatted = num.toExponential(6);
+                } else if (formatted.includes('.')) {
+                    // Удаление незначащих нулей после запятой
+                    formatted = formatted.replace(/\.?0+$/, '');
+                }
+
+                return formatted;
+            }
+
+            getDisplayValue() {
+                return this.currentValue;
+            }
+        }
+
+        // Класс UI для управления отображением
+        class CalculatorUI {
+            constructor() {
+                this.displayElement = document.querySelector('.display');
+            }
+
+            updateDisplay(value) {
+                this.displayElement.textContent = value;
+                this.displayElement.classList.remove('display-error');
+            }
+
+            showError(message) {
+                this.displayElement.textContent = message;
+                this.displayElement.classList.add('display-error');
+            }
+
+            animateButton(button) {
+                button.classList.add('btn-pressed');
+                setTimeout(() => {
+                    button.classList.remove('btn-pressed');
+                }, 150);
+            }
+        }
+
+        // Класс контроллера для обработки событий
+        class CalculatorController {
+            constructor(engine, ui) {
+                this.engine = engine;
+                this.ui = ui;
+                this.initialize();
+            }
+
+            initialize() {
+                // Обработка кликов по кнопкам
+                document.querySelectorAll('.btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        this.handleButtonClick(e.target);
+                    });
+                });
+
+                // Обработка клавиатурного ввода
+                document.addEventListener('keydown', (e) => {
+                    this.handleKeyboardInput(e);
+                });
+
+                // Начальное отображение
+                this.updateDisplay();
+            }
+
+            handleButtonClick(button) {
+                this.ui.animateButton(button);
+                const text = button.textContent;
+
+                if (button.classList.contains('btn-number')) {
+                    if (text === '.') {
+                        this.engine.inputDecimal();
+                    } else {
+                        this.engine.inputDigit(text);
+                    }
+                } else if (button.classList.contains('btn-operation')) {
+                    this.engine.setOperation(text);
+                } else if (button.classList.contains('btn-equals')) {
+                    this.handleEquals();
+                } else if (button.classList.contains('btn-function')) {
+                    if (text === 'AC') {
+                        this.engine.clearAll();
+                    } else if (text === 'C') {
+                        this.engine.clear();
+                    } else if (text === '⌫') {
+                        this.engine.backspace();
+                    }
+                }
+
+                this.updateDisplay();
+            }
+
+            handleEquals() {
+                let result;
+                if (this.engine.previousValue === null && this.engine.lastOperation.operator !== null) {
+                    // Повторение последней операции
+                    result = this.engine.repeatLastOperation();
+                } else {
+                    result = this.engine.calculate();
+                }
+
+                if (result.success) {
+                    this.engine.currentValue = result.value;
+                } else {
+                    this.ui.showError(result.error);
+                    return;
+                }
+            }
+
+            handleKeyboardInput(event) {
+                const key = event.key;
+
+                // Цифры
+                if (/[0-9]/.test(key)) {
+                    this.engine.inputDigit(key);
+                    this.updateDisplay();
+                    return;
+                }
+
+                // Операции
+                const operationMap = {
+                    '+': '+',
+                    '-': '−',
+                    '*': '×',
+                    '/': '÷'
+                };
+
+                if (operationMap[key]) {
+                    event.preventDefault();
+                    this.engine.setOperation(operationMap[key]);
+                    this.updateDisplay();
+                    return;
+                }
+
+                // Десятичная точка
+                if (key === '.' || key === ',') {
+                    this.engine.inputDecimal();
+                    this.updateDisplay();
+                    return;
+                }
+
+                // Равно
+                if (key === 'Enter' || key === '=') {
+                    event.preventDefault();
+                    this.handleEquals();
+                    this.updateDisplay();
+                    return;
+                }
+
+                // Очистка
+                if (key === 'Escape' || key.toLowerCase() === 'c') {
+                    this.engine.clear();
+                    this.updateDisplay();
+                    return;
+                }
+
+                // Backspace
+                if (key === 'Backspace') {
+                    event.preventDefault();
+                    this.engine.backspace();
+                    this.updateDisplay();
+                    return;
+                }
+            }
+
+            updateDisplay() {
+                this.ui.updateDisplay(this.engine.getDisplayValue());
+            }
+        }
+
+        // Инициализация калькулятора
+        const engine = new CalculatorEngine();
+        const ui = new CalculatorUI();
+        const controller = new CalculatorController(engine, ui);
+    </script>
+</body>
+</html>
